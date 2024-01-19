@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include "Logger.h"
 
-Logger* logger;
+extern Logger* logger;
 
 void setup()
 {

@@ -12,11 +12,15 @@ class Logger
     public:
         Logger(Stream* stream, String channel);
         void info(String message);
+        void printPrefix(Print* _logOutput, int logLevel);
 
     private:
-        static void printPrefix(Print* _logOutput, int logLevel);
-        static void printTimestamp(Print* _logOutput);
-        static void printLogLevel(Print* _logOutput, int logLevel);
+        void printTimestamp(Print* _logOutput);
+        void printChannel(Print* _logOutput);
+        void printLogLevel(Print* _logOutput, int logLevel);
+        static void staticPrefixFunction(Print* _logOutput, int logLevel);
 };
+
+extern Logger* logger;
 
 #endif
