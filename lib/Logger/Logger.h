@@ -7,15 +7,15 @@ class Logger
 {
     private:
         Logging* log;
-        String channel;
+        const char* channel;
 
     public:
-        Logger(Stream* stream, String channel);
-        void info(String message);
+        Logger(Stream* stream, const char* channel);
+        void info(const char* message);
     
     private:
-        static String getLogLevel(Print* _logOutput, int logLevel);
-        static String getTimestamp();
+        void formatMessage(const char* message, const char* level, char* buffer);
+        void getTimestamp(char* buffer);
         static void printPrefix(Print* _logOutput, int logLevel);
 };
 
