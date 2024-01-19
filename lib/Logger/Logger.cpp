@@ -4,7 +4,7 @@ Logger::Logger(Stream* stream, String channel)
 {
     this->channel = channel;
     this->log = new Logging();
-    this->log->setPrefix(printPrefix);
+    this->log->setPrefix(Logger::printPrefix);
     this->log->begin(LOG_LEVEL_VERBOSE, stream);
 }
 
@@ -13,13 +13,13 @@ void Logger::info(String message)
     this->log->infoln(message.c_str());
 }
 
-void printPrefix(Print* _logOutput, int logLevel)
+void Logger::printPrefix(Print* _logOutput, int logLevel)
 {
-    printTimestamp(_logOutput);
-    printLogLevel(_logOutput, logLevel);
+    Logger::printTimestamp(_logOutput);
+    Logger::printLogLevel(_logOutput, logLevel);
 }
 
-void printTimestamp(Print* _logOutput)
+void Logger::printTimestamp(Print* _logOutput)
 {
     const unsigned long MSECS_PER_SEC = 1000;
     const unsigned long SECS_PER_MIN = 60;
@@ -39,7 +39,7 @@ void printTimestamp(Print* _logOutput)
     _logOutput->print(timestamp);
 }
 
-void printLogLevel(Print* _logOutput, int logLevel)
+void Logger::printLogLevel(Print* _logOutput, int logLevel)
 {
     switch (logLevel)
     {
