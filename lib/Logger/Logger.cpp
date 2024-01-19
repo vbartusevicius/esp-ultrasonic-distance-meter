@@ -4,7 +4,8 @@ Logger::Logger(Stream* stream, String channel)
 {
     this->channel = channel;
     this->log = new Logging();
-    this->log->setPrefix([](Print* _logOutput, int logLevel) -> void { Logger::printPrefix(_logOutput, logLevel); });
+
+    this->log->setPrefix(Logger::printPrefix);
 
     this->log->begin(LOG_LEVEL_INFO, stream, false);
 }
@@ -16,11 +17,13 @@ void Logger::info(String message)
 
 void Logger::printPrefix(Print* _logOutput, int logLevel)
 {
-    printTimestamp(_logOutput);
-    printLogLevel (_logOutput, logLevel);
+    auto timestamp = Logger::getTimestamp();
+    auto level = Logger::getLogLevel(_logOutput, logLevel);
+
+    _logOutput->write((timestamp + " [" + level + "] ").c_str());
 }
 
-void Logger::printTimestamp(Print* _logOutput)
+String Logger::getTimestamp()
 {
   const unsigned long MSECS_PER_SEC = 1000;
   const unsigned long SECS_PER_MIN = 60;
@@ -36,22 +39,22 @@ void Logger::printTimestamp(Print* _logOutput)
   const unsigned long Hours = (secs  % SECS_PER_DAY) / SECS_PER_HOUR;
 
   char timestamp[20];
-  sprintf(timestamp, "%02d:%02d:%02d.%03d ", (int) Hours, (int) Minutes, (int) Seconds, (int) MilliSeconds);
-  _logOutput->print(timestamp);
+  sprintf(timestamp, "%02d:%02d:%02d.%03d", (int) Hours, (int) Minutes, (int) Seconds, (int) MilliSeconds);
+  
+  return String(timestamp);
 }
 
-
-void Logger::printLogLevel(Print* _logOutput, int logLevel)
+String Logger::getLogLevel(Print* _logOutput, int logLevel)
 {
     switch (logLevel)
     {
         default:
-        case 0:_logOutput->print("SILENT " ); break;
-        case 1:_logOutput->print("FATAL "  ); break;
-        case 2:_logOutput->print("ERROR "  ); break;
-        case 3:_logOutput->print("WARNING "); break;
-        case 4:_logOutput->print("INFO "   ); break;
-        case 5:_logOutput->print("TRACE "  ); break;
-        case 6:_logOutput->print("VERBOSE "); break;
+        case 0: return "SILENT";
+        case 1: return "FATAL";
+        case 2: return "ERROR";
+        case 3: return "WARNING";
+        case 4: return "INFO";
+        case 5: return "TRACE";
+        case 6: return "VERBOSE";
     }   
 }
