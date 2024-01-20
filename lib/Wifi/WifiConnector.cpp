@@ -16,11 +16,6 @@ void WifiConnector::process()
     this->wm->process();
 }
 
-String WifiConnector::getIp()
-{
-    return WiFi.localIP().toString();
-}
-
 bool WifiConnector::connect()
 {
     this->wm->setConfigPortalBlocking(false);

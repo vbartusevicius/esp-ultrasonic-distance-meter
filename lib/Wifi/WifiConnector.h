@@ -12,5 +12,4 @@ class WifiConnector
         WifiConnector(Logger* logger);
         void process();
         bool connect();
-        String getIp();
 };
