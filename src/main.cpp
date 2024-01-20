@@ -1,7 +1,9 @@
 #include <Arduino.h>
 #include "Logger.h"
+#include "WifiConnector.h"
 
 Logger* logger;
+WifiConnector* wifi;
 
 void setup()
 {
@@ -9,11 +11,17 @@ void setup()
 
     while (!Serial && !Serial.available()) {
     }
+
     logger = new Logger(&Serial, "System");
+    wifi = new WifiConnector(logger);
+
+    wifi->connect();
 }
 
 void loop()
 {
+    wifi->process();
     logger->info("Logger works!");
-    delay(1000);
+
+    delay(100);
 }

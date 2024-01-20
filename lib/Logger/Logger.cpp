@@ -5,13 +5,13 @@ Logger::Logger(Stream* stream, const char* channel)
     this->channel = channel;
     this->log = new Logging();
 
-    this->log->begin(LOG_LEVEL_INFO, stream, false);
+    this->log->begin(LOG_LEVEL_VERBOSE, stream, false);
 }
 
-void Logger::info(const char* message)
+void Logger::info(String message)
 {
     char buffer[255];
-    this->formatMessage(message, "INFO", buffer);
+    this->formatMessage(message.c_str(), "INFO", buffer);
 
     this->log->infoln(buffer);
 }

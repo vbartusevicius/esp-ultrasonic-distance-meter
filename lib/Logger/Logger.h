@@ -11,7 +11,7 @@ class Logger
 
     public:
         Logger(Stream* stream, const char* channel);
-        void info(const char* message);
+        void info(String message);
     
     private:
         void formatMessage(const char* message, const char* level, char* buffer);
