@@ -1,9 +1,11 @@
 #include <Arduino.h>
 #include "Logger.h"
 #include "WifiConnector.h"
+#include "LedController.h"
 
 Logger* logger;
 WifiConnector* wifi;
+LedController* led;
 
 void setup()
 {
@@ -14,6 +16,7 @@ void setup()
 
     logger = new Logger(&Serial, "System");
     wifi = new WifiConnector(logger);
+    led = new LedController(1000);
 
     wifi->connect();
 }
@@ -21,7 +24,9 @@ void setup()
 void loop()
 {
     wifi->process();
+    led->process();
+
     logger->info("IP address: " + wifi->getIp());
 
-    delay(1000);
+    delay(100);
 }
