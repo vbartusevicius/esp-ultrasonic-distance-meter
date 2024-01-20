@@ -3,22 +3,22 @@
 WifiConnector::WifiConnector(Logger* logger)
 {
     this->logger = logger;
+    this->appName = "ESP_distance_meter";
 
     WiFi.mode(WIFI_STA);
+    WiFi.setHostname(this->appName);
 
     this->wm = new WiFiManager();
-    this->wm->resetSettings();
 }
 
-bool WifiConnector::process()
+void WifiConnector::process()
 {
-    bool connected = this->wm->process();
+    this->wm->process();
+}
 
-    if (!connected) {
-        this->logger->info("WiFi connection lost");
-    }
-
-    return connected;
+String WifiConnector::getIp()
+{
+    return WiFi.localIP().toString();
 }
 
 bool WifiConnector::connect()
@@ -26,9 +26,7 @@ bool WifiConnector::connect()
     this->wm->setConfigPortalBlocking(false);
     this->wm->setConfigPortalTimeout(300);
 
-    bool connected = this->wm->autoConnect(
-        ("ESP_distance_meter_" + String(ESP.getChipId())).c_str()
-    );
+    bool connected = this->wm->autoConnect(this->appName);
 
     if (connected) {
         this->logger->info("Connected to WiFi");

@@ -21,7 +21,7 @@ void setup()
 void loop()
 {
     wifi->process();
-    logger->info("Logger works!");
+    logger->info("IP address: " + wifi->getIp());
 
-    delay(100);
+    delay(1000);
 }

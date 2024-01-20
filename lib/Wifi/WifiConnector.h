@@ -6,9 +6,11 @@ class WifiConnector
     private:
         WiFiManager* wm;
         Logger* logger;
+        const char* appName;
 
     public:
         WifiConnector(Logger* logger);
-        bool process();
+        void process();
         bool connect();
+        String getIp();
 };

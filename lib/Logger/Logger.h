@@ -16,7 +16,6 @@ class Logger
     private:
         void formatMessage(const char* message, const char* level, char* buffer);
         void getTimestamp(char* buffer);
-        static void printPrefix(Print* _logOutput, int logLevel);
 };
 
 #endif
