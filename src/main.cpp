@@ -3,11 +3,13 @@
 #include "WifiConnector.h"
 #include "LedController.h"
 #include "WebAdmin.h"
+#include "Storage.h"
 
 Logger* logger;
 WifiConnector* wifi;
 LedController* led;
 WebAdmin* admin;
+Storage* storage;
 
 void setup()
 {
@@ -17,20 +19,22 @@ void setup()
     }
 
     logger = new Logger(&Serial, "System");
+    storage = new Storage();
     wifi = new WifiConnector(logger);
     led = new LedController(1000);
-    admin = new WebAdmin();
+    admin = new WebAdmin(storage);
 
-    wifi->connect();
+    wifi->begin();
 
-    admin->renderAdmin();
+    storage->begin();
+    admin->begin();
 }
 
 void loop()
 {
-    wifi->process();
-    led->process();
-    admin->updateAdmin();
+    wifi->run();
+    led->run();
+    admin->run();
 
     delay(100);
 }

@@ -9,5 +9,5 @@ class LedController
 
     public:
         LedController(unsigned int interval);
-        void process();
+        void run();
 };

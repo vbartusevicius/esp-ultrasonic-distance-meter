@@ -11,12 +11,12 @@ WifiConnector::WifiConnector(Logger* logger)
     this->wm = new WiFiManager();
 }
 
-void WifiConnector::process()
+void WifiConnector::run()
 {
     this->wm->process();
 }
 
-bool WifiConnector::connect()
+bool WifiConnector::begin()
 {
     this->wm->setConfigPortalBlocking(false);
     this->wm->setConfigPortalTimeout(300);

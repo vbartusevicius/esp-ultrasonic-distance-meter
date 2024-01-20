@@ -10,6 +10,6 @@ class WifiConnector
 
     public:
         WifiConnector(Logger* logger);
-        void process();
-        bool connect();
+        void run();
+        bool begin();
 };

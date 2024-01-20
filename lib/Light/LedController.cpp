@@ -9,7 +9,7 @@ LedController::LedController(unsigned int interval)
     pinMode(LED_BUILTIN, OUTPUT);
 }
 
-void LedController::process()
+void LedController::run()
 {
     auto time = millis();
     if ((time - this->lastTime) < this->interval) {
