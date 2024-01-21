@@ -60,10 +60,11 @@ void WebAdmin::begin()
         Control::noParent,
         Parameter::MQTT_PASS
     );
-    auto deviceName = this->addControl(
+    String deviceName = this->storage->getParameter(Parameter::MQTT_DEVICE, "esp_distance_meter");
+    auto deviceNameId = this->addControl(
         ControlType::Text, 
         "Device name", 
-        this->storage->getParameter(Parameter::MQTT_DEVICE, "esp_distance_meter"),
+        deviceName,
         Control::noParent,
         Parameter::MQTT_DEVICE
     );
@@ -71,16 +72,16 @@ void WebAdmin::begin()
     this->distanceTopicId = this->addControl(
         ControlType::Label, 
         "Distance topic", 
-        "Distance topic: {device_name}/stat/distance", 
-        deviceName
+        this->getDistanceTopic(deviceName), 
+        deviceNameId
     );
     ESPUI.setElementStyle(this->distanceTopicId, labelStyle);
 
     this->percentageTopicId = this->addControl(
         ControlType::Label, 
         "Percentage topic", 
-        "Percentage topic: {device_name}/stat/percentage", 
-        deviceName
+        this->getPercentageTopic(deviceName),
+        deviceNameId
     );
     ESPUI.setElementStyle(this->percentageTopicId, labelStyle);
 
@@ -93,7 +94,7 @@ void WebAdmin::begin()
 
     ESPUI.setElementStyle(this->statsId, labelStyle);
 
-    ESPUI.setPanelWide(deviceName, true);
+    ESPUI.setPanelWide(deviceNameId, true);
     ESPUI.setPanelWide(this->statsId, true);
 
     ESPUI.begin("ESP distance meter");
@@ -140,13 +141,23 @@ void WebAdmin::handleCallback(Control* sender, int eventName, void* userData)
 void WebAdmin::updateTopics(Control* sender)
 {
     auto percentageControl = ESPUI.getControl(this->percentageTopicId);
-    percentageControl->value = "Percentage topic: " + sender->value + "/stat/percentage";
+    percentageControl->value = this->getPercentageTopic(sender->value);
 
     auto distanceControl = ESPUI.getControl(this->distanceTopicId);
-    distanceControl->value = "Distance topic: " + sender->value + "/stat/distance"; 
+    distanceControl->value = this->getDistanceTopic(sender->value); 
 
     ESPUI.updateControl(percentageControl);
     ESPUI.updateControl(distanceControl);
+}
+
+String WebAdmin::getDistanceTopic(String deviceName)
+{
+    return "Distance topic: " + deviceName + "/stat/distance";
+}
+
+String WebAdmin::getPercentageTopic(String deviceName)
+{
+    return "Percentage topic: " + deviceName + "/stat/percentage";
 }
 
 void WebAdmin::run()

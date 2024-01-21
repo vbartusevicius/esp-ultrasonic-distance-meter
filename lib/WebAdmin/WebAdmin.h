@@ -27,6 +27,8 @@ class WebAdmin
         int addControl(ControlType controlType, const char* label, const String& value, int parent, char* name = nullptr);
         void updateStats(String& data);
         void updateTopics(Control* control);
+        String getDistanceTopic(String deviceName);
+        String getPercentageTopic(String deviceName);
 };
 
 #endif
