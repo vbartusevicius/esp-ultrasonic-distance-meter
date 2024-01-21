@@ -13,6 +13,7 @@ class Storage
         void begin();
         void saveParameter(char* name, String& value);
         String getParameter(char* name, String defaultValue = String());
+        void reset();
 };
 
 #endif

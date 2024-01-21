@@ -19,3 +19,8 @@ String Storage::getParameter(char* name, String defaultValue)
 {
     return this->prefs->getString(name, defaultValue);
 }
+
+void Storage::reset()
+{
+    this->prefs->clear();
+}

@@ -13,9 +13,11 @@ Storage* storage;
 
 void resetCallback() {
     wifi->resetSettings();
-    ESP.eraseConfig(); 
+    storage->reset();
+    ESP.eraseConfig();
+
     delay(2000);
-    ESP.reset();
+    ESP.restart();
 }
 
 void setup()
