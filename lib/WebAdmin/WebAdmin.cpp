@@ -3,13 +3,17 @@
 
 extern WebAdmin* admin;
 
-WebAdmin::WebAdmin(Storage* storage)
+WebAdmin::WebAdmin(Storage* storage, ResetCallback resetCallback)
 {
     this->storage = storage;
+    this->resetCallback = resetCallback;
 
     this->lastUpdated = millis();
     this->interval = 1000;
 }
+
+char* WebAdmin::SUBMIT = "submit";
+char* WebAdmin::RESET = "reset";
 
 void WebAdmin::begin()
 {
@@ -85,6 +89,24 @@ void WebAdmin::begin()
     );
     ESPUI.setElementStyle(this->percentageTopicId, labelStyle);
 
+    ESPUI.addControl(ControlType::Separator, "General");
+
+    auto submitId = this->addControl(
+        ControlType::Button,
+        "Actions",
+        "Save & restart",
+        Control::noParent,
+        WebAdmin::SUBMIT
+    );
+    this->addControl(
+        ControlType::Button,
+        "Reset device",
+        "Reset device",
+        submitId,
+        WebAdmin::RESET
+    );
+    ESPUI.getControl(submitId)->color = ControlColor::Carrot;
+
     this->statsId = this->addControl(
         ControlType::Label, 
         "Stats", 
@@ -96,6 +118,7 @@ void WebAdmin::begin()
 
     ESPUI.setPanelWide(deviceNameId, true);
     ESPUI.setPanelWide(this->statsId, true);
+    ESPUI.setPanelWide(submitId, true);
 
     ESPUI.begin("ESP distance meter");
 }
@@ -133,6 +156,20 @@ void WebAdmin::handleCallback(Control* sender, int eventName, void* userData)
     }
     if (userData == Parameter::MQTT_DEVICE) {
         this->updateTopics(sender);
+    }
+    if (userData == WebAdmin::SUBMIT) {
+        if (eventName == B_DOWN) {
+            return;
+        }
+        ESP.restart();
+        return;
+    }
+    if (userData == WebAdmin::RESET) {
+        if (eventName == B_DOWN) {
+            return;
+        }
+        this->resetCallback();
+        return;
     }
 
     this->storage->saveParameter((char *) userData, sender->value);

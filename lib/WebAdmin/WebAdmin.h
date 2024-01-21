@@ -7,6 +7,8 @@
 #include "Logger.h"
 #include "Storage.h"
 
+typedef void (*ResetCallback)();
+
 class WebAdmin
 {
     private:
@@ -16,9 +18,13 @@ class WebAdmin
         unsigned int lastUpdated;
         unsigned int interval;
         Storage* storage;
+        ResetCallback resetCallback;
+
+        static char* SUBMIT;
+        static char* RESET;
 
     public:
-        WebAdmin(Storage* storage);
+        WebAdmin(Storage* storage, ResetCallback resetCallback);
         void begin();
         void run();
         void handleCallback(Control* control, int number, void* userData);
