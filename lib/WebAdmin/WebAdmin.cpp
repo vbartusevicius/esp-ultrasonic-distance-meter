@@ -1,4 +1,5 @@
 #include "WebAdmin.h"
+#include "Parameter.h"
 
 extern WebAdmin* admin;
 
@@ -12,86 +13,84 @@ WebAdmin::WebAdmin(Storage* storage)
 
 void WebAdmin::begin()
 {
-    ControlColor color = ControlColor::None;
     String labelStyle = "width: 100%; text-align: left; font-weight: 500;";
 
-    auto callback = [](Control* sender, int eventName, void* userData) { admin->handleCallback(sender, eventName, userData); };
-    char* distanceEmpty = "distance_empty";
-
     ESPUI.addControl(ControlType::Separator, "Sensor settings");
-    ESPUI.addControl(
+    this->addControl(
         ControlType::Number, 
         "Distance to sensor when \"empty\" (cm)", 
-        "100", 
-        color, 
+        this->storage->getParameter(Parameter::DISTANCE_EMPTY, "100"),
         Control::noParent,
-        callback,
-        distanceEmpty
+        Parameter::DISTANCE_EMPTY
     );
-    ESPUI.addControl(
+    this->addControl(
         ControlType::Number, 
         "Distance to sensor when \"full\" (cm)", 
-        "10", 
-        color, 
-        Control::noParent
+        this->storage->getParameter(Parameter::DISTANCE_FULL, "10"),
+        Control::noParent,
+        Parameter::DISTANCE_FULL
     );
 
     ESPUI.addControl(ControlType::Separator, "MQTT settings");
-    ESPUI.addControl(
+    this->addControl(
         ControlType::Text, 
         "Host", 
-        "Hostname", 
-        color, 
-        Control::noParent
+        this->storage->getParameter(Parameter::MQTT_HOST, "mosquitto.lan"),
+        Control::noParent,
+        Parameter::MQTT_HOST
     );
-    ESPUI.addControl(
+    this->addControl(
         ControlType::Number, 
         "Port", 
-        "1883", 
-        color, 
-        Control::noParent
+        this->storage->getParameter(Parameter::MQTT_PORT, "1883"),
+        Control::noParent,
+        Parameter::MQTT_PORT
     );
-    ESPUI.addControl(
+    this->addControl(
         ControlType::Text, 
         "Username", 
-        "Username", 
-        color, 
-        Control::noParent
+        this->storage->getParameter(Parameter::MQTT_USER, "username"),
+        Control::noParent,
+        Parameter::MQTT_USER
     );
-    ESPUI.addControl(
+    this->addControl(
         ControlType::Password, 
         "Password", 
-        "Password", 
-        color, 
-        Control::noParent
+        this->storage->getParameter(Parameter::MQTT_PASS, "password"),
+        Control::noParent,
+        Parameter::MQTT_PASS
     );
-
-    auto deviceName = ESPUI.addControl(
+    auto deviceName = this->addControl(
         ControlType::Text, 
         "Device name", 
-        "esp_distance_meter", 
-        color, 
-        Control::noParent
+        this->storage->getParameter(Parameter::MQTT_DEVICE, "esp_distance_meter"),
+        Control::noParent,
+        Parameter::MQTT_DEVICE
     );
-    auto distanceTopic = ESPUI.addControl(
-        ControlType::Label,
+
+    this->distanceTopicId = this->addControl(
+        ControlType::Label, 
         "Distance topic", 
         "Distance topic: {device_name}/stat/distance", 
-        color, 
         deviceName
     );
-    ESPUI.setElementStyle(distanceTopic, labelStyle);
+    ESPUI.setElementStyle(this->distanceTopicId, labelStyle);
 
-    auto percentageTopic = ESPUI.addControl(
+    this->percentageTopicId = this->addControl(
         ControlType::Label, 
         "Percentage topic", 
         "Percentage topic: {device_name}/stat/percentage", 
-        color, 
         deviceName
     );
-    ESPUI.setElementStyle(percentageTopic, labelStyle);
+    ESPUI.setElementStyle(this->percentageTopicId, labelStyle);
 
-    this->statsId = ESPUI.addControl(ControlType::Label, "Stats", "", color);
+    this->statsId = this->addControl(
+        ControlType::Label, 
+        "Stats", 
+        "", 
+        Control::noParent
+    );
+
     ESPUI.setElementStyle(this->statsId, labelStyle);
 
     ESPUI.setPanelWide(deviceName, true);
@@ -100,11 +99,54 @@ void WebAdmin::begin()
     ESPUI.begin("ESP distance meter");
 }
 
+int WebAdmin::addControl(ControlType controlType, const char* label, const String& value, int parent, char* name)
+{
+    ControlColor color = ControlColor::None;
+    if (name != nullptr) {
+        auto callback = [](Control* sender, int eventName, void* userData) { admin->handleCallback(sender, eventName, userData); };
+
+        return ESPUI.addControl(
+            controlType, 
+            label, 
+            value, 
+            color, 
+            parent,
+            callback,
+            name
+        );
+    }
+
+    return ESPUI.addControl(
+        controlType, 
+        label, 
+        value, 
+        color, 
+        parent
+    );
+}
+
 void WebAdmin::handleCallback(Control* sender, int eventName, void* userData)
 {
-    Serial.print("value:" + sender->value + " event:" + String(eventName));
-    Serial.print(" usderData:");
-    Serial.println((const char *) userData);
+    if (userData == nullptr) {
+        return;
+    }
+    if (userData == Parameter::MQTT_DEVICE) {
+        this->updateTopics(sender);
+    }
+
+    this->storage->saveParameter((char *) userData, sender->value);
+}
+
+void WebAdmin::updateTopics(Control* sender)
+{
+    auto percentageControl = ESPUI.getControl(this->percentageTopicId);
+    percentageControl->value = "Percentage topic: " + sender->value + "/stat/percentage";
+
+    auto distanceControl = ESPUI.getControl(this->distanceTopicId);
+    distanceControl->value = "Distance topic: " + sender->value + "/stat/distance"; 
+
+    ESPUI.updateControl(percentageControl);
+    ESPUI.updateControl(distanceControl);
 }
 
 void WebAdmin::run()
@@ -123,9 +165,15 @@ void WebAdmin::run()
         WiFi.localIP().toString().c_str(),
         WiFi.RSSI()
     );
+    String data = buffer;
 
+    this->updateStats(data);
+}
+
+void WebAdmin::updateStats(String& data)
+{
     auto stats = ESPUI.getControl(this->statsId);
-    stats->value = buffer;
+    stats->value = data;
 
     ESPUI.updateControl(stats);
 }

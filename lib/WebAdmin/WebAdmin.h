@@ -11,6 +11,8 @@ class WebAdmin
 {
     private:
         unsigned int statsId;
+        unsigned int percentageTopicId;
+        unsigned int distanceTopicId;
         unsigned int lastUpdated;
         unsigned int interval;
         Storage* storage;
@@ -20,6 +22,11 @@ class WebAdmin
         void begin();
         void run();
         void handleCallback(Control* control, int number, void* userData);
+
+    private:
+        int addControl(ControlType controlType, const char* label, const String& value, int parent, char* name = nullptr);
+        void updateStats(String& data);
+        void updateTopics(Control* control);
 };
 
 #endif

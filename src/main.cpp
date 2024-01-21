@@ -36,5 +36,7 @@ void loop()
     led->run();
     admin->run();
 
-    delay(100);
+    // logger->info("IP address: " + WiFi.localIP().toString());
+
+    // delay(100);
 }

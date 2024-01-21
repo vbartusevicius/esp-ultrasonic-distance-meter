@@ -9,3 +9,13 @@ void Storage::begin()
 {
     this->prefs->begin("esp_distance_meter");
 }
+
+void Storage::saveParameter(char* name, String& value)
+{
+    this->prefs->putString(name, value);
+}
+
+String Storage::getParameter(char* name, String defaultValue)
+{
+    return this->prefs->getString(name, defaultValue);
+}
