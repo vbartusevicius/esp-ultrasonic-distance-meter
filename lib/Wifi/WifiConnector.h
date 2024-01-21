@@ -12,4 +12,5 @@ class WifiConnector
         WifiConnector(Logger* logger);
         void run();
         bool begin();
+        void resetSettings();
 };

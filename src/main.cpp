@@ -12,7 +12,10 @@ WebAdmin* admin;
 Storage* storage;
 
 void resetCallback() {
-    Serial.print("RESET requested");
+    wifi->resetSettings();
+    ESP.eraseConfig(); 
+    delay(2000);
+    ESP.reset();
 }
 
 void setup()

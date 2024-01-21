@@ -31,3 +31,8 @@ bool WifiConnector::begin()
 
     return connected;
 }
+
+void WifiConnector::resetSettings()
+{
+    this->wm->resetSettings();
+}
