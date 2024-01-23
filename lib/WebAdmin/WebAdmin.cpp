@@ -1,11 +1,13 @@
 #include "WebAdmin.h"
 #include "Parameter.h"
+#include "TimeHelper.h"
 
 extern WebAdmin* admin;
 
-WebAdmin::WebAdmin(Storage* storage, ResetCallback resetCallback)
+WebAdmin::WebAdmin(Storage* storage, Logger* logger, ResetCallback resetCallback)
 {
     this->storage = storage;
+    this->logger = logger;
     this->resetCallback = resetCallback;
 
     this->lastUpdated = millis();
@@ -114,11 +116,20 @@ void WebAdmin::begin()
         Control::noParent
     );
 
+    this->logId = this->addControl(
+        ControlType::Label, 
+        "Log", 
+        "", 
+        Control::noParent
+    );
+
     ESPUI.setElementStyle(this->statsId, labelStyle);
+    ESPUI.setElementStyle(this->logId, labelStyle);
 
     ESPUI.setPanelWide(deviceNameId, true);
     ESPUI.setPanelWide(this->statsId, true);
     ESPUI.setPanelWide(submitId, true);
+    ESPUI.setPanelWide(this->logId, true);
 
     ESPUI.begin("ESP distance meter");
 }
@@ -199,29 +210,57 @@ String WebAdmin::getPercentageTopic(String deviceName)
 
 void WebAdmin::run()
 {
+    if (!this->shouldUpdate()) {
+        return;
+    }
+
+    this->updateStats();
+    this->updateLog();
+}
+
+bool WebAdmin::shouldUpdate()
+{
     auto time = millis();
     if (time - this->lastUpdated < this->interval) {
-        return;
+        return false;
     }
     this->lastUpdated = time;
 
+    return true;
+}
+
+void WebAdmin::updateStats()
+{
     char buffer[512];
+    char time[32];
+
+    TimeHelper::getUptime(time);
     sprintf(
         buffer,
-        "Network: %s<br>IP address: %s<br>Signal: %d dBm",
+        "Uptime: %s<br>Network: %s<br>IP address: %s<br>Signal: %d dBm",
+        time,
         WiFi.SSID().c_str(),
         WiFi.localIP().toString().c_str(),
         WiFi.RSSI()
     );
     String data = buffer;
 
-    this->updateStats(data);
-}
-
-void WebAdmin::updateStats(String& data)
-{
     auto stats = ESPUI.getControl(this->statsId);
     stats->value = data;
 
     ESPUI.updateControl(stats);
+}
+
+void WebAdmin::updateLog()
+{
+    String data = "";
+
+    for (auto &element : this->logger->getBuffer()) {
+        data += element + "<br>";
+    }
+
+    auto log = ESPUI.getControl(this->logId);
+    log->value = data;
+
+    ESPUI.updateControl(log);
 }

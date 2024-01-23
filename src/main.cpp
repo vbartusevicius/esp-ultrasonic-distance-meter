@@ -32,7 +32,7 @@ void setup()
     wifi = new WifiConnector(logger);
     led = new LedController(1000);
 
-    admin = new WebAdmin(storage, &resetCallback);
+    admin = new WebAdmin(storage, logger, &resetCallback);
 
     wifi->begin();
 
