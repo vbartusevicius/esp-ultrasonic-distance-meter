@@ -12,6 +12,8 @@ void Storage::begin()
 
 void Storage::saveParameter(char* name, String& value)
 {
+    Serial.println(name);
+    Serial.println(value);
     this->prefs->putString(name, value);
 }
 

@@ -25,14 +25,14 @@ void WebAdmin::begin()
     this->addControl(
         ControlType::Number, 
         "Distance to sensor when \"empty\" (cm)", 
-        this->storage->getParameter(Parameter::DISTANCE_EMPTY, "100"),
+        this->storage->getParameter(Parameter::DISTANCE_EMPTY, "2"),
         Control::noParent,
         Parameter::DISTANCE_EMPTY
     );
     this->addControl(
         ControlType::Number, 
         "Distance to sensor when \"full\" (cm)", 
-        this->storage->getParameter(Parameter::DISTANCE_FULL, "10"),
+        this->storage->getParameter(Parameter::DISTANCE_FULL, "1"),
         Control::noParent,
         Parameter::DISTANCE_FULL
     );
@@ -41,32 +41,32 @@ void WebAdmin::begin()
     this->addControl(
         ControlType::Text, 
         "Host", 
-        this->storage->getParameter(Parameter::MQTT_HOST, "mosquitto.lan"),
+        this->storage->getParameter(Parameter::MQTT_HOST),
         Control::noParent,
         Parameter::MQTT_HOST
     );
     this->addControl(
         ControlType::Number, 
         "Port", 
-        this->storage->getParameter(Parameter::MQTT_PORT, "1883"),
+        this->storage->getParameter(Parameter::MQTT_PORT),
         Control::noParent,
         Parameter::MQTT_PORT
     );
     this->addControl(
         ControlType::Text, 
         "Username", 
-        this->storage->getParameter(Parameter::MQTT_USER, "username"),
+        this->storage->getParameter(Parameter::MQTT_USER),
         Control::noParent,
         Parameter::MQTT_USER
     );
     this->addControl(
         ControlType::Password, 
         "Password", 
-        this->storage->getParameter(Parameter::MQTT_PASS, "password"),
+        this->storage->getParameter(Parameter::MQTT_PASS),
         Control::noParent,
         Parameter::MQTT_PASS
     );
-    String deviceName = this->storage->getParameter(Parameter::MQTT_DEVICE, "esp_distance_meter");
+    String deviceName = this->storage->getParameter(Parameter::MQTT_DEVICE, "changeme");
     auto deviceNameId = this->addControl(
         ControlType::Text, 
         "Device name", 
@@ -77,19 +77,11 @@ void WebAdmin::begin()
 
     this->distanceTopicId = this->addControl(
         ControlType::Label, 
-        "Distance topic", 
+        "Distance topic",
         this->getDistanceTopic(deviceName), 
         deviceNameId
     );
     ESPUI.setElementStyle(this->distanceTopicId, labelStyle);
-
-    this->percentageTopicId = this->addControl(
-        ControlType::Label, 
-        "Percentage topic", 
-        this->getPercentageTopic(deviceName),
-        deviceNameId
-    );
-    ESPUI.setElementStyle(this->percentageTopicId, labelStyle);
 
     ESPUI.addControl(ControlType::Separator, "General");
 
@@ -166,7 +158,7 @@ void WebAdmin::handleCallback(Control* sender, int eventName, void* userData)
         return;
     }
     if (userData == Parameter::MQTT_DEVICE) {
-        this->updateTopics(sender);
+        this->updateTopics(sender->value);
     }
     if (userData == WebAdmin::SUBMIT) {
         if (eventName == B_DOWN) {
@@ -186,26 +178,20 @@ void WebAdmin::handleCallback(Control* sender, int eventName, void* userData)
     this->storage->saveParameter((char *) userData, sender->value);
 }
 
-void WebAdmin::updateTopics(Control* sender)
+void WebAdmin::updateTopics(String value)
 {
-    auto percentageControl = ESPUI.getControl(this->percentageTopicId);
-    percentageControl->value = this->getPercentageTopic(sender->value);
-
     auto distanceControl = ESPUI.getControl(this->distanceTopicId);
-    distanceControl->value = this->getDistanceTopic(sender->value); 
+    auto distanceTopic = this->getDistanceTopic(value);
+    distanceControl->value = "Distance topic: " + distanceTopic; 
 
-    ESPUI.updateControl(percentageControl);
     ESPUI.updateControl(distanceControl);
+
+    this->storage->saveParameter(Parameter::MQTT_TOPIC_DISTANCE, distanceTopic);
 }
 
 String WebAdmin::getDistanceTopic(String deviceName)
 {
-    return "Distance topic: " + deviceName + "/stat/distance";
-}
-
-String WebAdmin::getPercentageTopic(String deviceName)
-{
-    return "Percentage topic: " + deviceName + "/stat/percentage";
+    return deviceName + "/stat/distance";
 }
 
 void WebAdmin::run()

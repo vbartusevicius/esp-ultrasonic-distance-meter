@@ -1,7 +1,8 @@
-#define WEBSERVER_H
-#define HTTP_ANY
 #ifndef WEB_ADMIN_H
 #define WEB_ADMIN_H
+
+#define WEBSERVER_H
+#define HTTP_ANY
 #include <ESPAsyncWebServer.h>
 #include <ESPUI.h>
 #include "Logger.h"
@@ -13,7 +14,6 @@ class WebAdmin
 {
     private:
         unsigned int statsId;
-        unsigned int percentageTopicId;
         unsigned int distanceTopicId;
         unsigned int logId;
         unsigned int lastUpdated;
@@ -35,9 +35,8 @@ class WebAdmin
         int addControl(ControlType controlType, const char* label, const String& value, int parent, char* name = nullptr);
         void updateStats();
         void updateLog();
-        void updateTopics(Control* control);
+        void updateTopics(String value);
         String getDistanceTopic(String deviceName);
-        String getPercentageTopic(String deviceName);
         bool shouldUpdate();
 };
 

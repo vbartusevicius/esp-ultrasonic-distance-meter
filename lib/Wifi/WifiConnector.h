@@ -1,3 +1,6 @@
+#ifndef WIFI_CONNECTOR_H
+#define WIFI_CONNECTOR_H
+
 #include <WiFiManager.h>
 #include "Logger.h"
 
@@ -14,3 +17,5 @@ class WifiConnector
         bool begin();
         void resetSettings();
 };
+
+#endif
