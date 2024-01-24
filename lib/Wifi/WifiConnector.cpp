@@ -24,9 +24,9 @@ bool WifiConnector::begin()
     bool connected = this->wm->autoConnect(this->appName);
 
     if (connected) {
-        this->logger->info("Connected to WiFi");
+        this->logger->info("Connected to WiFi.");
     } else {
-        this->logger->info("Serving WiFi configuration portal");
+        this->logger->info("Serving WiFi configuration portal.");
     }
 
     return connected;

@@ -54,7 +54,6 @@ void loop()
     mqtt->run();
 
     mqtt->sendDistance(55.43, 93.0);
-    // logger->info("IP address: " + WiFi.localIP().toString());
 
     delay(500);
 }

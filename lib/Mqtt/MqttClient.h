@@ -10,6 +10,7 @@ class MqttClient
     private:
         Storage* storage;
         Logger* logger;
+        MQTTClient* client;
         unsigned long lastReconnectAttempt;
 
     public:
