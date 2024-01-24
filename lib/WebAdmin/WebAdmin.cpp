@@ -239,7 +239,7 @@ void WebAdmin::updateStats()
 
 void WebAdmin::updateLog()
 {
-    String data = "";
+    String data;
 
     for (auto &element : this->logger->getBuffer()) {
         data += element + "<br>";

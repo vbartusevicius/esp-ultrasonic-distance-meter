@@ -6,7 +6,7 @@
 class Storage
 {
     private:
-        Preferences* prefs;
+        Preferences prefs;
     
     public:
         Storage();

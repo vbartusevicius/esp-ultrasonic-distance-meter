@@ -11,7 +11,7 @@ using namespace std;
 class Logger
 {
     private:
-        Logging* log;
+        Logging log;
         const char* channel;
         vector<String> buffer;
 

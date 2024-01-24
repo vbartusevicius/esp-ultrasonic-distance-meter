@@ -7,21 +7,19 @@ WifiConnector::WifiConnector(Logger* logger)
 
     WiFi.mode(WIFI_STA);
     WiFi.setHostname(this->appName);
-
-    this->wm = new WiFiManager();
 }
 
 void WifiConnector::run()
 {
-    this->wm->process();
+    wm.process();
 }
 
 bool WifiConnector::begin()
 {
-    this->wm->setConfigPortalBlocking(false);
-    this->wm->setConfigPortalTimeout(300);
+    wm.setConfigPortalBlocking(false);
+    wm.setConfigPortalTimeout(300);
 
-    bool connected = this->wm->autoConnect(this->appName);
+    bool connected = wm.autoConnect(this->appName);
 
     if (connected) {
         this->logger->info("Connected to WiFi.");
@@ -34,5 +32,5 @@ bool WifiConnector::begin()
 
 void WifiConnector::resetSettings()
 {
-    this->wm->resetSettings();
+    wm.resetSettings();
 }

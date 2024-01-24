@@ -7,7 +7,7 @@
 class WifiConnector
 {
     private:
-        WiFiManager* wm;
+        WiFiManager wm;
         Logger* logger;
         const char* appName;
 

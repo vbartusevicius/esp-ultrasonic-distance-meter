@@ -9,7 +9,6 @@ MqttClient::MqttClient(Storage* storage, Logger* logger)
 {
     this->storage = storage;
     this->logger = logger;
-    this->client = new MQTTClient();
 
     this->lastReconnectAttempt = 0;
 }
@@ -24,11 +23,11 @@ bool MqttClient::connect()
 
     if (username == "" && password == "") {
         connection = [device, this]() -> bool { 
-            return this->client->connect(device.c_str()); 
+            return client.connect(device.c_str()); 
         };
     } else {
         connection = [device, username, password, this]() -> bool {
-            return this->client->connect(device.c_str(), username.c_str(), password.c_str());
+            return client.connect(device.c_str(), username.c_str(), password.c_str());
         };
     }
 
@@ -45,7 +44,7 @@ bool MqttClient::connect()
 
 void MqttClient::begin()
 {
-    this->client->begin(
+    client.begin(
         this->storage->getParameter(Parameter::MQTT_HOST).c_str(),
         atoi(this->storage->getParameter(Parameter::MQTT_PORT).c_str()),
         network
@@ -56,10 +55,10 @@ void MqttClient::begin()
 
 void MqttClient::run()
 {
-    this->client->loop();
+    client.loop();
     delay(10);
 
-    if (this->client->connected()) {
+    if (client.connected()) {
         return;
     }
     
@@ -83,7 +82,7 @@ void MqttClient::sendDistance(float relative, float absolute)
     doc["absolute"] = absolute;
     serializeJson(doc, json);
 
-    auto ok = this->client->publish(this->storage->getParameter(Parameter::MQTT_TOPIC_DISTANCE).c_str(), json);
+    auto ok = client.publish(this->storage->getParameter(Parameter::MQTT_TOPIC_DISTANCE).c_str(), json);
 
     if (!ok) {
         this->logger->warning("Failed to publish to MQTT: " + json);
