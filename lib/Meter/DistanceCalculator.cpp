@@ -9,9 +9,8 @@ DistanceCalculator::DistanceCalculator(Storage* storage)
 float DistanceCalculator::getAbsolute(float distance)
 {
     float distanceEmpty = atof(this->storage->getParameter(Parameter::DISTANCE_EMPTY).c_str()) / 100;
-    float distanceFull = atof(this->storage->getParameter(Parameter::DISTANCE_FULL).c_str()) / 100;
 
-    return distanceEmpty - distance - distanceFull; 
+    return distanceEmpty - distance; 
 }
 
 float DistanceCalculator::getRelative(float distance)
@@ -19,5 +18,5 @@ float DistanceCalculator::getRelative(float distance)
     float distanceEmpty = atof(this->storage->getParameter(Parameter::DISTANCE_EMPTY).c_str()) / 100;
     float distanceFull = atof(this->storage->getParameter(Parameter::DISTANCE_FULL).c_str()) / 100;
 
-    return distance / (distanceFull - distanceEmpty);
+    return this->getAbsolute(distance) / (distanceFull - distanceEmpty);
 }

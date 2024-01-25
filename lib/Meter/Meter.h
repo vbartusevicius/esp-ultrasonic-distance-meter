@@ -7,8 +7,8 @@
 class Meter
 {
     private:
-        static constexpr int TRIG_PIN = 14;
-        static constexpr int ECHO_PIN = 12;
+        static constexpr int TRIG_PIN = D1;
+        static constexpr int ECHO_PIN = D2;
         static constexpr float ABSOLUTE_TEMP = 273.16;
         static constexpr float CURRENT_TEMP = 15.0;
 
