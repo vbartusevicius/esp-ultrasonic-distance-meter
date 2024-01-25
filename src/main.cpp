@@ -7,8 +7,14 @@
 #include "WebAdmin.h"
 #include "Storage.h"
 #include "MqttClient.h"
+#include "Meter.h"
+#include "DistanceCalculator.h"
 
 WiFiClient network;
+float relativeDistance = 0;
+float absoluteDistance = 0;
+unsigned int lastUpdate = 0;
+unsigned int updateInterval = 1000;
 
 Logger* logger;
 WifiConnector* wifi;
@@ -16,6 +22,8 @@ LedController* led;
 WebAdmin* admin;
 Storage* storage;
 MqttClient* mqtt;
+Meter* meter;
+DistanceCalculator* calculator;
 
 void resetCallback() {
     wifi->resetSettings();
@@ -39,6 +47,8 @@ void setup()
     led = new LedController(1000);
     mqtt = new MqttClient(storage, logger);
     admin = new WebAdmin(storage, logger, &resetCallback);
+    meter = new Meter(logger);
+    calculator = new DistanceCalculator(storage);
 
     wifi->begin();
     storage->begin();
@@ -53,7 +63,17 @@ void loop()
     admin->run();
     mqtt->run();
 
-    mqtt->sendDistance(55.43, 93.0);
+    auto now = millis();
+    if (now - lastUpdate < updateInterval) {
+        delay(100);
+        return;
+    }
 
-    delay(500);
+    lastUpdate = now;
+    float distance = meter->measure();
+
+    relativeDistance = calculator->getRelative(distance);
+    absoluteDistance = calculator->getAbsolute(distance);
+
+    mqtt->sendDistance(relativeDistance, absoluteDistance);
 }
