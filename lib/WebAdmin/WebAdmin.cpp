@@ -9,9 +9,6 @@ WebAdmin::WebAdmin(Storage* storage, Logger* logger, ResetCallback resetCallback
     this->storage = storage;
     this->logger = logger;
     this->resetCallback = resetCallback;
-
-    this->lastUpdated = millis();
-    this->interval = 1000;
 }
 
 char* WebAdmin::SUBMIT = "submit";
@@ -196,23 +193,8 @@ String WebAdmin::getDistanceTopic(String deviceName)
 
 void WebAdmin::run()
 {
-    if (!this->shouldUpdate()) {
-        return;
-    }
-
     this->updateStats();
     this->updateLog();
-}
-
-bool WebAdmin::shouldUpdate()
-{
-    auto time = millis();
-    if (time - this->lastUpdated < this->interval) {
-        return false;
-    }
-    this->lastUpdated = time;
-
-    return true;
 }
 
 void WebAdmin::updateStats()

@@ -16,8 +16,6 @@ class WebAdmin
         unsigned int statsId;
         unsigned int distanceTopicId;
         unsigned int logId;
-        unsigned int lastUpdated;
-        unsigned int interval;
         Storage* storage;
         Logger* logger;
         ResetCallback resetCallback;
@@ -37,7 +35,6 @@ class WebAdmin
         void updateLog();
         void updateTopics(String value);
         String getDistanceTopic(String deviceName);
-        bool shouldUpdate();
 };
 
 #endif

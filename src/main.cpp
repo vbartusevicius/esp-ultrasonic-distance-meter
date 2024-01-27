@@ -1,5 +1,7 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
+#include <TaskManagerIO.h>
+#include <ExecWithParameter.h>
 
 #include "Logger.h"
 #include "WifiConnector.h"
@@ -14,10 +16,9 @@
 WiFiClient network;
 Display display;
 
-float relativeDistance = 0;
-float absoluteDistance = 0;
-unsigned int lastUpdate = 0;
-unsigned int updateInterval = 1000;
+float measuredDistance = 0.0;
+float relativeDistance = 0.0;
+float absoluteDistance = 0.0;
 
 Logger* logger;
 WifiConnector* wifi;
@@ -47,7 +48,7 @@ void setup()
     logger = new Logger(&Serial, "System");
     storage = new Storage();
     wifi = new WifiConnector(logger);
-    led = new LedController(1000);
+    led = new LedController();
     mqtt = new MqttClient(storage, logger);
     admin = new WebAdmin(storage, logger, &resetCallback);
     meter = new Meter(logger);
@@ -57,35 +58,31 @@ void setup()
     storage->begin();
     admin->begin();
     mqtt->begin();
-}
 
-float roundToTwo(float number)
-{
-    float value = (int)(number * 100 + .5);
-    return (float)value / 100;
+    taskManager.schedule(repeatSeconds(1), [] { led->run(); });
+    taskManager.schedule(repeatSeconds(1), [] { admin->run(); });
+    taskManager.schedule(repeatMillis(500), [] { mqtt->run(); });
+    taskManager.schedule(repeatMillis(500), [] { wifi->run(); });
+
+    // taskManager.schedule(repeatSeconds(10), [] {
+    //     measuredDistance = meter->measure();
+    //     relativeDistance = calculator->getRelative(measuredDistance);
+    //     absoluteDistance = calculator->getAbsolute(measuredDistance);
+    // });
+    taskManager.schedule(repeatSeconds(1), [] {
+        measuredDistance = (float) random(10, 110) / 100;
+        relativeDistance = calculator->getRelative(measuredDistance);
+        absoluteDistance = calculator->getAbsolute(measuredDistance);
+    });
+    taskManager.schedule(repeatSeconds(1), [] {
+        mqtt->sendDistance(relativeDistance, absoluteDistance);
+        display.setProgress(relativeDistance);
+        
+        display.run();
+    });
 }
 
 void loop()
 {
-    wifi->run();
-    led->run();
-    admin->run();
-    mqtt->run();
-
-    auto now = millis();
-    if (now - lastUpdate < updateInterval) {
-        return;
-    }
-
-    lastUpdate = now;
-    // float distance = meter->measure();
-    float distance = (float) random(10, 110) / 100;
-
-    relativeDistance = calculator->getRelative(distance);
-    absoluteDistance = calculator->getAbsolute(distance);
- 
-    mqtt->sendDistance(relativeDistance, absoluteDistance);
-    display.setProgress(relativeDistance);
-    
-    display.run();
+    taskManager.runLoop();
 }
