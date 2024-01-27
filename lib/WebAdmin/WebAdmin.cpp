@@ -1,6 +1,5 @@
 #include "WebAdmin.h"
 #include "Parameter.h"
-#include "TimeHelper.h"
 
 extern WebAdmin* admin;
 
@@ -191,32 +190,32 @@ String WebAdmin::getDistanceTopic(String deviceName)
     return deviceName + "/stat/distance";
 }
 
-void WebAdmin::run()
+void WebAdmin::run(Stats* stats)
 {
-    this->updateStats();
+    this->updateStats(stats);
     this->updateLog();
 }
 
-void WebAdmin::updateStats()
+void WebAdmin::updateStats(Stats* stats)
 {
     char buffer[512];
-    char time[32];
 
-    TimeHelper::getUptime(time);
-    sprintf(
+    snprintf(
         buffer,
-        "Uptime: %s<br>Network: %s<br>IP address: %s<br>Signal: %d dBm",
-        time,
-        WiFi.SSID().c_str(),
-        WiFi.localIP().toString().c_str(),
-        WiFi.RSSI()
+        sizeof(buffer),
+        "Uptime: %s<br>Network: %s<br>IP address: %s<br>Signal: %s<br>Relative distance: %s",
+        stats->uptime.c_str(),
+        stats->network.c_str(),
+        stats->ipAddress.c_str(),
+        stats->wifiSignal.c_str(),
+        stats->relativeDistance.c_str()
     );
     String data = buffer;
 
-    auto stats = ESPUI.getControl(this->statsId);
-    stats->value = data;
+    auto statsControl = ESPUI.getControl(this->statsId);
+    statsControl->value = data;
 
-    ESPUI.updateControl(stats);
+    ESPUI.updateControl(statsControl);
 }
 
 void WebAdmin::updateLog()

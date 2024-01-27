@@ -15,6 +15,7 @@
 
 WiFiClient network;
 Display display;
+Stats stats;
 
 float measuredDistance = 0.0;
 float relativeDistance = 0.0;
@@ -60,9 +61,10 @@ void setup()
     mqtt->begin();
 
     taskManager.schedule(repeatSeconds(1), [] { led->run(); });
-    taskManager.schedule(repeatSeconds(1), [] { admin->run(); });
+    taskManager.schedule(repeatSeconds(1), [] { admin->run(&stats); });
     taskManager.schedule(repeatMillis(500), [] { mqtt->run(); });
     taskManager.schedule(repeatMillis(500), [] { wifi->run(); });
+    taskManager.schedule(repeatSeconds(1), [] { stats.updateStats(relativeDistance); });
 
     // taskManager.schedule(repeatSeconds(10), [] {
     //     measuredDistance = meter->measure();

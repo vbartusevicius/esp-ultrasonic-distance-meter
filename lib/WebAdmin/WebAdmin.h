@@ -7,6 +7,7 @@
 #include <ESPUI.h>
 #include "Logger.h"
 #include "Storage.h"
+#include "Stats.h"
 
 typedef void (*ResetCallback)();
 
@@ -26,12 +27,12 @@ class WebAdmin
     public:
         WebAdmin(Storage* storage, Logger* logger, ResetCallback resetCallback);
         void begin();
-        void run();
+        void run(Stats* stats);
         void handleCallback(Control* control, int number, void* userData);
 
     private:
         int addControl(ControlType controlType, const char* label, const String& value, int parent, char* name = nullptr);
-        void updateStats();
+        void updateStats(Stats* stats);
         void updateLog();
         void updateTopics(String value);
         String getDistanceTopic(String deviceName);

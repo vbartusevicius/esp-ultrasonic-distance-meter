@@ -26,7 +26,7 @@ void Display::setProgress(float relative)
 void Display::renderProgress()
 {
     char value[8];
-    snprintf(value, sizeof(value), "%2.0f%%", this->relativeProgress * 100);
+    snprintf(value, sizeof(value), "%.0f%%", this->relativeProgress * 100);
 
     u8g2.drawFrame(0, 0, this->displayWidth, this->progressHeight);
     u8g2.drawBox(1, 1, (int) ((this->displayWidth - 2) * this->relativeProgress), this->progressHeight - 2);
