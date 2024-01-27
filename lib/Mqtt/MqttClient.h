@@ -19,6 +19,9 @@ class MqttClient
         bool connect();
         bool run();
         void sendDistance(float relative, float absolute, float measured);
+
+    private:
+        void publishHomeAssistantAutoconfig();
 };
 
 #endif

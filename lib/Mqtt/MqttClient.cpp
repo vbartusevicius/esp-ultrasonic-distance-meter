@@ -51,6 +51,26 @@ void MqttClient::begin()
     );
 
     this->connect();
+    this->publishHomeAssistantAutoconfig();
+}
+
+void MqttClient::publishHomeAssistantAutoconfig()
+{
+    JsonDocument doc;
+    String json;
+
+    doc["state_topic"] = this->storage->getParameter(Parameter::MQTT_TOPIC_DISTANCE);
+    doc["value_template"] = "{{ ((value_json.relative | float) * 100) | round(2) }}";
+    doc["unit_of_measurement"] = "%";
+    doc["unique_id"] = this->storage->getParameter(Parameter::MQTT_DEVICE) + "_" + String(ESP.getChipId());
+    serializeJson(doc, json);
+
+    client.publish(
+       "homeassistant/sensor/" + this->storage->getParameter(Parameter::MQTT_DEVICE) + "/config",
+        json,
+        true,
+        1
+    );
 }
 
 bool MqttClient::run()
@@ -77,7 +97,7 @@ void MqttClient::sendDistance(float relative, float absolute, float measured)
     doc["measured"] = measured;
     serializeJson(doc, json);
 
-    auto ok = client.publish(this->storage->getParameter(Parameter::MQTT_TOPIC_DISTANCE).c_str(), json);
+    auto ok = client.publish(this->storage->getParameter(Parameter::MQTT_TOPIC_DISTANCE), json);
 
     if (!ok) {
         this->logger->warning("Failed to publish to MQTT: " + json);
