@@ -12,7 +12,7 @@ class Meter
         static constexpr float ABSOLUTE_TEMP = 273.16;
         static constexpr float CURRENT_TEMP = 15.0;
 
-        float speedOfSound;
+        double speedOfSound;
         Logger* logger;
 
     public:

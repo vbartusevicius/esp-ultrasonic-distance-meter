@@ -21,11 +21,11 @@ float Meter::measure()
     delayMicroseconds(20);
     digitalWrite(Meter::TRIG_PIN, LOW);
 
-    // time in seconds
-    float timeTook = (float) pulseIn(Meter::ECHO_PIN, HIGH, 100000) / 1000000;
-    float distance = this->speedOfSound * timeTook;
+    unsigned long pulse = pulseIn(Meter::ECHO_PIN, HIGH, 100000);
+    double timeTook = (double) pulse / 1000000; // time in seconds
+    float distance = this->speedOfSound * timeTook / 2;
 
-    this->logger->info("Measurement taken. time: " + String(timeTook) + "s, distance: " + String(distance) + "m.");
+    this->logger->info("Measurement taken. distance: " + String(distance) + "m.");
 
     return distance;
 }

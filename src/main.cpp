@@ -83,7 +83,7 @@ void setup()
     //     absoluteDistance = calculator->getAbsolute(measuredDistance);
     //     Serial.printf("Measured: %.2f, Relative: %.2f, Absolute: %.2f\r\n", measuredDistance, relativeDistance, absoluteDistance);
     // });
-    
+
     taskManager.schedule(repeatSeconds(1), [] {
         mqtt->sendDistance(relativeDistance, absoluteDistance);
         display.run(stats);
