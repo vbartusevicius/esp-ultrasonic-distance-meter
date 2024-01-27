@@ -53,24 +53,18 @@ void MqttClient::begin()
     this->connect();
 }
 
-void MqttClient::run()
+bool MqttClient::run()
 {
     client.loop();
     delay(10);
 
     if (client.connected()) {
-        return;
+        return true;
     }
     
     this->logger->warning("Connection to MQTT lost, reconnecting.");
 
-    auto now = millis();
-    if (now - this->lastReconnectAttempt > 2000) {
-        this->lastReconnectAttempt = now;
-        if (this->connect()) {
-            this->lastReconnectAttempt = 0;
-        }
-    }
+    return this->connect();
 }
 
 void MqttClient::sendDistance(float relative, float absolute)

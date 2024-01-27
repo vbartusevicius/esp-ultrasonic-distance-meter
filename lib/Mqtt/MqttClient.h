@@ -17,7 +17,7 @@ class MqttClient
         MqttClient(Storage* storage, Logger* logger);
         void begin();
         bool connect();
-        void run();
+        bool run();
         void sendDistance(float relative, float absolute);
 };
 

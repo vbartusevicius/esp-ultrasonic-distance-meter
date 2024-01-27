@@ -203,7 +203,7 @@ void WebAdmin::updateStats(Stats* stats)
     snprintf(
         buffer,
         sizeof(buffer),
-        "Uptime: %s<br>Network: %s<br>IP address: %s<br>Signal: %s<br>Relative distance: %s",
+        "Uptime: %s<br>Network: %s<br>IP address: %s<br>Signal: %sdBm<br>Relative distance: %s",
         stats->uptime.c_str(),
         stats->network.c_str(),
         stats->ipAddress.c_str(),

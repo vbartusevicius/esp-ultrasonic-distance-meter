@@ -5,7 +5,9 @@ DistanceCalculator::DistanceCalculator(Storage* storage)
 {
     this->storage = storage;
 }
-
+/*
+ * returns absolute height of measured column in meters
+ */
 float DistanceCalculator::getAbsolute(float distance)
 {
     float distanceEmpty = atof(this->storage->getParameter(Parameter::DISTANCE_EMPTY).c_str()) / 100;
@@ -14,6 +16,9 @@ float DistanceCalculator::getAbsolute(float distance)
     return (absolute < 0) ? 0.0 : absolute; 
 }
 
+/*
+ * returns relative height of measured column in percentage fraction
+ */
 float DistanceCalculator::getRelative(float distance)
 {
     float distanceEmpty = atof(this->storage->getParameter(Parameter::DISTANCE_EMPTY).c_str()) / 100;

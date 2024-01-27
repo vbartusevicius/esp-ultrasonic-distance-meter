@@ -13,10 +13,15 @@ class Stats
         String network = "";
         String uptime = "";
         String relativeDistance = "";
+        float fractionalDistance = 0.0;
+        float measurement = 0.0;
+
+        bool mqttConnected = false;
+        bool sensorConnected = false;
 
     public:
         Stats();
-        void updateStats(float relativeDistance);
+        void updateStats(float measurement, float relativeDistance, bool mqttConnected);
 };
 
 #endif

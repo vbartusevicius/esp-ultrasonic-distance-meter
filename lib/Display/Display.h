@@ -1,21 +1,22 @@
 #ifndef DISPLAY_H
 #define DISPLAY_H
 #include <Arduino.h>
+#include "Stats.h"
 
 class Display
 {
     private:
-        float relativeProgress = 0;
-        int progressHeight = 16;
+        int cursorOffset = 0;
         int displayWidth;
 
     public:
         Display();
-        void run();
-        void setProgress(float relative);
+        void run(Stats* stats);
     
     private:
-        void renderProgress();
+        void renderProgress(Stats* stats);
+        void renderNetwork(Stats* stats);
+        void renderBoolStatus(String name, bool status);
 };
 
 #endif
