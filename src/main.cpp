@@ -59,6 +59,12 @@ void setup()
     mqtt->begin();
 }
 
+float roundToTwo(float number)
+{
+    float value = (int)(number * 100 + .5);
+    return (float)value / 100;
+}
+
 void loop()
 {
     wifi->run();
@@ -73,12 +79,11 @@ void loop()
 
     lastUpdate = now;
     // float distance = meter->measure();
+    float distance = random(10, 110);
 
-    // relativeDistance = calculator->getRelative(distance);
-    // absoluteDistance = calculator->getAbsolute(distance);
-    relativeDistance = 0.43;
-    absoluteDistance = 44.35;
+    relativeDistance = calculator->getRelative(distance);
+    absoluteDistance = calculator->getAbsolute(distance);
  
     mqtt->sendDistance(relativeDistance, absoluteDistance);
-    display.displayText(String(random(5000, 7000)));
+    display.displayText(String("rel: " + String(roundToTwo(relativeDistance)) + " abs: " + String(roundToTwo(absoluteDistance))));
 }
