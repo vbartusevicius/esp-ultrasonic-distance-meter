@@ -4,9 +4,18 @@
 
 class Display
 {
+    private:
+        float relativeProgress = 0;
+        int progressHeight = 16;
+        int displayWidth;
+
     public:
         Display();
-        void displayText(String text);
+        void run();
+        void setProgress(float relative);
+    
+    private:
+        void renderProgress();
 };
 
 #endif

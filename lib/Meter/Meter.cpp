@@ -9,6 +9,7 @@ Meter::Meter(Logger* logger)
     pinMode(Meter::ECHO_PIN, INPUT_PULLUP);
 }
 
+// returns the measured distance in meters
 float Meter::measure()
 {
     digitalWrite(Meter::TRIG_PIN, LOW);
@@ -18,6 +19,7 @@ float Meter::measure()
     delayMicroseconds(20);
     digitalWrite(Meter::TRIG_PIN, LOW);
 
+    // time in seconds
     float timeTook = pulseIn(Meter::ECHO_PIN, HIGH, 100000) / 1000000;
     float distance = this->speedOfSound * timeTook;
 

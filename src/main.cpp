@@ -79,11 +79,13 @@ void loop()
 
     lastUpdate = now;
     // float distance = meter->measure();
-    float distance = random(10, 110);
+    float distance = (float) random(10, 110) / 100;
 
     relativeDistance = calculator->getRelative(distance);
     absoluteDistance = calculator->getAbsolute(distance);
  
     mqtt->sendDistance(relativeDistance, absoluteDistance);
-    display.displayText(String("rel: " + String(roundToTwo(relativeDistance)) + " abs: " + String(roundToTwo(absoluteDistance))));
+    display.setProgress(relativeDistance);
+    
+    display.run();
 }
