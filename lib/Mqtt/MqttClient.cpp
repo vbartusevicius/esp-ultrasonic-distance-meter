@@ -62,7 +62,10 @@ void MqttClient::publishHomeAssistantAutoconfig()
     doc["state_topic"] = this->storage->getParameter(Parameter::MQTT_TOPIC_DISTANCE);
     doc["value_template"] = "{{ ((value_json.relative | float) * 100) | round(2) }}";
     doc["unit_of_measurement"] = "%";
+    doc["name"] = "ESP ultrasonic distance meter";
     doc["unique_id"] = this->storage->getParameter(Parameter::MQTT_DEVICE) + "_" + String(ESP.getChipId());
+    doc["object_id"] = "esp_distance_meter";
+
     serializeJson(doc, json);
 
     client.publish(
