@@ -85,7 +85,7 @@ void setup()
     // });
 
     taskManager.schedule(repeatSeconds(1), [] {
-        mqtt->sendDistance(relativeDistance, absoluteDistance);
+        mqtt->sendDistance(relativeDistance, absoluteDistance, measuredDistance);
         display.run(stats);
     });
 }

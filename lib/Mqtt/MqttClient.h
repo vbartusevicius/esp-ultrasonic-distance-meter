@@ -18,7 +18,7 @@ class MqttClient
         void begin();
         bool connect();
         bool run();
-        void sendDistance(float relative, float absolute);
+        void sendDistance(float relative, float absolute, float measured);
 };
 
 #endif

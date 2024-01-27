@@ -67,13 +67,14 @@ bool MqttClient::run()
     return this->connect();
 }
 
-void MqttClient::sendDistance(float relative, float absolute)
+void MqttClient::sendDistance(float relative, float absolute, float measured)
 {
     JsonDocument doc;
     String json;
 
     doc["relative"] = relative;
     doc["absolute"] = absolute;
+    doc["measured"] = measured;
     serializeJson(doc, json);
 
     auto ok = client.publish(this->storage->getParameter(Parameter::MQTT_TOPIC_DISTANCE).c_str(), json);
