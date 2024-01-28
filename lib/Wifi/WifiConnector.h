@@ -16,6 +16,7 @@ class WifiConnector
         void run();
         bool begin();
         void resetSettings();
+        const char* getAppName();
 };
 
 #endif

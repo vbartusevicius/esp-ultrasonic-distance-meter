@@ -1,7 +1,6 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
-#include <iostream>
 #include <queue>
 #include <ArduinoLog.h>
 #include "TimeHelper.h"

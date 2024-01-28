@@ -12,6 +12,7 @@
 #include "Meter.h"
 #include "DistanceCalculator.h"
 #include "Display.h"
+#include "Aggregator.h"
 
 WiFiClient network;
 Display display;
@@ -20,6 +21,7 @@ float measuredDistance = 0.0;
 float relativeDistance = 0.0;
 float absoluteDistance = 0.0;
 bool mqttConnected = false;
+bool wifiConnected = false;
 
 Logger* logger;
 WifiConnector* wifi;
@@ -30,6 +32,7 @@ MqttClient* mqtt;
 Meter* meter;
 DistanceCalculator* calculator;
 Stats* stats;
+Aggregator* aggregator;
 
 void resetCallback() {
     wifi->resetSettings();
@@ -56,16 +59,27 @@ void setup()
     meter = new Meter(logger);
     calculator = new DistanceCalculator(storage);
     stats = new Stats();
+    aggregator = new Aggregator();
 
-    wifi->begin();
+    wifiConnected = wifi->begin();
     storage->begin();
     admin->begin();
     mqtt->begin();
 
-    taskManager.schedule(repeatSeconds(1), [] { led->run(); });
-    taskManager.schedule(repeatSeconds(1), [] { admin->run(stats); });
-    taskManager.schedule(repeatMillis(500), [] { mqttConnected = mqtt->run(); });
     taskManager.schedule(repeatMillis(500), [] { wifi->run(); });
+    taskManager.schedule(repeatSeconds(1), [] { admin->run(stats); });
+
+    if (!wifiConnected) {
+        display.displayFirstStep(wifi->getAppName());
+        return;
+    }
+    if (storage->isEmpty()) {
+        display.displaySecondStep(WiFi.localIP().toString().c_str());
+        return;
+    }
+
+    taskManager.schedule(repeatSeconds(1), [] { led->run(); });
+    taskManager.schedule(repeatMillis(500), [] { mqttConnected = mqtt->run(); });
     taskManager.schedule(repeatSeconds(1), [] { stats->updateStats(
         measuredDistance,
         relativeDistance,
@@ -73,12 +87,12 @@ void setup()
     ); });
 
     taskManager.schedule(repeatSeconds(10), [] {
-        measuredDistance = meter->measure();
+        measuredDistance = aggregator->aggregate(meter->measure());
         relativeDistance = calculator->getRelative(measuredDistance);
         absoluteDistance = calculator->getAbsolute(measuredDistance);
     });
     // taskManager.schedule(repeatSeconds(1), [] {
-    //     measuredDistance = (float) random(10, 110) / 100;
+    //     measuredDistance = aggregator->aggregate((float) random(10, 110) / 100);
     //     relativeDistance = calculator->getRelative(measuredDistance);
     //     absoluteDistance = calculator->getAbsolute(measuredDistance);
     //     Serial.printf("Measured: %.2f, Relative: %.2f, Absolute: %.2f\r\n", measuredDistance, relativeDistance, absoluteDistance);

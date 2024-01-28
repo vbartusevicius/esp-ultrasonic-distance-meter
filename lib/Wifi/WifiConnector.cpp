@@ -18,6 +18,14 @@ bool WifiConnector::begin()
 {
     wm.setConfigPortalBlocking(false);
     wm.setConfigPortalTimeout(300);
+    wm.setSaveConfigCallback([] { 
+        delay(1000);
+        ESP.restart();
+    });
+    wm.setConfigPortalTimeoutCallback([] {
+        delay(1000);
+        ESP.restart();
+    });
 
     bool connected = wm.autoConnect(this->appName);
 
@@ -28,6 +36,11 @@ bool WifiConnector::begin()
     }
 
     return connected;
+}
+
+const char* WifiConnector::getAppName()
+{
+    return this->appName;
 }
 
 void WifiConnector::resetSettings()

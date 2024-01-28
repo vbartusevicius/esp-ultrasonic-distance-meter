@@ -1,4 +1,5 @@
 #include "Storage.h"
+#include "Parameter.h"
 
 Storage::Storage()
 {
@@ -17,6 +18,17 @@ void Storage::saveParameter(char* name, String& value)
 String Storage::getParameter(char* name, String defaultValue)
 {
     return prefs.getString(name, defaultValue);
+}
+
+bool Storage::isEmpty()
+{
+    for (auto &param : Parameter::REQUIRED_PARAMS) {
+        if (!prefs.isKey(param)) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 void Storage::reset()

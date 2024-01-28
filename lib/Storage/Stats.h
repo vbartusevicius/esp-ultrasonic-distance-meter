@@ -21,7 +21,11 @@ class Stats
 
     public:
         Stats();
-        void updateStats(float measurement, float relativeDistance, bool mqttConnected);
+        void updateStats(
+            float measurement, 
+            float relativeDistance, 
+            bool mqttConnected
+        );
 };
 
 #endif

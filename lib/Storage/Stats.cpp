@@ -4,7 +4,11 @@
 
 Stats::Stats() {}
 
-void Stats::updateStats(float measurement, float distance, bool mqttConnected)
+void Stats::updateStats(
+    float measurement, 
+    float distance, 
+    bool mqttConnected
+)
 {
     this->measurement = measurement;
     this->fractionalDistance = distance;
