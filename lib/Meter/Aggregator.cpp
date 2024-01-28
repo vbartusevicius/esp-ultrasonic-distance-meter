@@ -15,5 +15,5 @@ float Aggregator::aggregate(float value)
         data += element;
     }
 
-    return data / this->windowSize;
+    return data / this->buffer.size();
 }
