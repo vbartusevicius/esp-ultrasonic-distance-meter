@@ -32,6 +32,13 @@ void WebAdmin::begin()
         Control::noParent,
         Parameter::DISTANCE_FULL
     );
+    this->addControl(
+        ControlType::Number, 
+        "AVG window samples count", 
+        this->storage->getParameter(Parameter::AVG_SAMPLE_COUNT, "10"),
+        Control::noParent,
+        Parameter::AVG_SAMPLE_COUNT
+    );
 
     ESPUI.addControl(ControlType::Separator, "MQTT settings");
     this->addControl(

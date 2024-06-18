@@ -2,6 +2,7 @@
 #define AGGREGATOR_H
 
 #include <queue>
+#include "Storage.h"
 
 using namespace std;
 
@@ -9,10 +10,10 @@ class Aggregator
 {
     private:
         vector<float> buffer;
-        const unsigned int windowSize = 10;
+        Storage* storage;
     
     public:
-        Aggregator();
+        Aggregator(Storage* storage);
         float aggregate(float value);
 
 };

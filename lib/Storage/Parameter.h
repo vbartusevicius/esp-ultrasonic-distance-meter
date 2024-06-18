@@ -15,6 +15,7 @@ class Parameter
         static char* MQTT_PASS;
         static char* MQTT_DEVICE;
         static char* MQTT_TOPIC_DISTANCE;
+        static char* AVG_SAMPLE_COUNT;
 
         static vector<char*> REQUIRED_PARAMS;
 };

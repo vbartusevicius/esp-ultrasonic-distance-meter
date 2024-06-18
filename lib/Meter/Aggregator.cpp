@@ -1,10 +1,19 @@
 #include "Aggregator.h"
+#include "Parameter.h"
 
-Aggregator::Aggregator() {}
+Aggregator::Aggregator(Storage* storage)
+{
+    this->storage = storage;
+}
 
 float Aggregator::aggregate(float value)
 {
-    if (this->buffer.size() >= this->windowSize) {
+    const int averageWindow = atol(this->storage->getParameter(Parameter::AVG_SAMPLE_COUNT, "10").c_str());
+    
+    if (this->buffer.size() + 1 > averageWindow) {
+        this->buffer.clear();
+    }
+    if (this->buffer.size() >= averageWindow) {
         this->buffer.erase(this->buffer.begin());
     }
     this->buffer.push_back(value);

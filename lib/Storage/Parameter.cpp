@@ -10,6 +10,7 @@ char* Parameter::MQTT_USER = "mqtt_user";
 char* Parameter::MQTT_PASS = "mqtt_pass";
 char* Parameter::MQTT_DEVICE = "mqtt_device";
 char* Parameter::MQTT_TOPIC_DISTANCE = "mqtt_topic_distance";
+char* Parameter::AVG_SAMPLE_COUNT = "avg_sample_count";
 
 vector<char*> Parameter::REQUIRED_PARAMS = {
     Parameter::DISTANCE_EMPTY,
