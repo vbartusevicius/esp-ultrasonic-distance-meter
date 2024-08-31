@@ -1,10 +1,12 @@
+#include "WifiConnector.h"
+
 #include <Arduino.h>
+#include <ArduinoOTA.h>
 #include <ESP8266WiFi.h>
 #include <TaskManagerIO.h>
 #include <ExecWithParameter.h>
 
 #include "Logger.h"
-#include "WifiConnector.h"
 #include "LedController.h"
 #include "WebAdmin.h"
 #include "Storage.h"
@@ -46,6 +48,8 @@ void resetCallback() {
 void setup()
 {
     Serial.begin(9600);
+    ArduinoOTA.setPort(8266);
+    ArduinoOTA.begin();
 
     while (!Serial && !Serial.available()) {
     }
@@ -106,5 +110,6 @@ void setup()
 
 void loop()
 {
+    ArduinoOTA.handle();
     taskManager.runLoop();
 }
