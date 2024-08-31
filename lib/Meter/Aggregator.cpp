@@ -1,9 +1,10 @@
 #include "Aggregator.h"
 #include "Parameter.h"
 
-Aggregator::Aggregator(Storage* storage)
+Aggregator::Aggregator(Storage* storage, Logger* logger)
 {
     this->storage = storage;
+    this->logger = logger;
 }
 
 float Aggregator::aggregate(float value)
@@ -16,7 +17,12 @@ float Aggregator::aggregate(float value)
     if (this->buffer.size() >= averageWindow) {
         this->buffer.erase(this->buffer.begin());
     }
-    this->buffer.push_back(value);
+    
+    if (round(value) > 0) {
+        this->buffer.push_back(value);
+    } else {
+        this->logger->info("Zero value given, skipping aggregation");
+    }
 
     float data = 0.0;
 

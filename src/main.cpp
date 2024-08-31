@@ -63,7 +63,7 @@ void setup()
     meter = new Meter(logger);
     calculator = new DistanceCalculator(storage);
     stats = new Stats();
-    aggregator = new Aggregator(storage);
+    aggregator = new Aggregator(storage, logger);
 
     wifiConnected = wifi->begin();
     storage->begin();

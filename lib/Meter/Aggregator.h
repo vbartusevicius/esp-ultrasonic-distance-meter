@@ -3,6 +3,7 @@
 
 #include <queue>
 #include "Storage.h"
+#include "Logger.h"
 
 using namespace std;
 
@@ -11,9 +12,10 @@ class Aggregator
     private:
         vector<float> buffer;
         Storage* storage;
+        Logger* logger;
     
     public:
-        Aggregator(Storage* storage);
+        Aggregator(Storage* storage, Logger* logger);
         float aggregate(float value);
 
 };
