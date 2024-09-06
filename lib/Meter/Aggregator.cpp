@@ -21,7 +21,7 @@ float Aggregator::aggregate(float value)
     float diff = abs(lastValue - value);
 
     bool deltaOK = value * (maxDelta / 100.0) > diff || this->buffer.size() == 0;
-    bool valueOK = round(value) > 0;
+    bool valueOK = round(value * 100.0) > 0;
 
     if (deltaOK && valueOK) {
         this->buffer.push_back(value);
