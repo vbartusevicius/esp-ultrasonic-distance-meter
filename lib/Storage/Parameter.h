@@ -16,6 +16,8 @@ class Parameter
         static char* MQTT_DEVICE;
         static char* MQTT_TOPIC_DISTANCE;
         static char* AVG_SAMPLE_COUNT;
+        static char* SAMPLING_INTERVAL;
+        static char* MAXIMUM_DISTANCE_DELTA;
 
         static vector<char*> REQUIRED_PARAMS;
 };

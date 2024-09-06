@@ -15,6 +15,7 @@
 #include "DistanceCalculator.h"
 #include "Display.h"
 #include "Aggregator.h"
+#include "Parameter.h"
 
 WiFiClient network;
 Display display;
@@ -90,12 +91,15 @@ void setup()
         mqttConnected
     ); });
 
-    taskManager.schedule(repeatSeconds(10), [] {
-        measuredDistance = aggregator->aggregate(meter->measure());
-        relativeDistance = calculator->getRelative(measuredDistance);
-        absoluteDistance = calculator->getAbsolute(measuredDistance);
-    });
-    // taskManager.schedule(repeatSeconds(1), [] {
+    taskManager.schedule(
+        repeatSeconds(atoi(storage->getParameter(Parameter::SAMPLING_INTERVAL, "10").c_str())),
+        [] {
+            measuredDistance = aggregator->aggregate(meter->measure());
+            relativeDistance = calculator->getRelative(measuredDistance);
+            absoluteDistance = calculator->getAbsolute(measuredDistance);
+        }
+    );
+    // taskManager.schedule(repeatSeconds(atoi(storage->getParameter(Parameter::SAMPLING_INTERVAL, "10").c_str())), [] {
     //     measuredDistance = aggregator->aggregate((float) random(10, 110) / 100);
     //     relativeDistance = calculator->getRelative(measuredDistance);
     //     absoluteDistance = calculator->getAbsolute(measuredDistance);

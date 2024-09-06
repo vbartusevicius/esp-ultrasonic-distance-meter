@@ -39,6 +39,20 @@ void WebAdmin::begin()
         Control::noParent,
         Parameter::AVG_SAMPLE_COUNT
     );
+    this->addControl(
+        ControlType::Number, 
+        "Sampling interval (seconds)", 
+        this->storage->getParameter(Parameter::SAMPLING_INTERVAL, "10"),
+        Control::noParent,
+        Parameter::SAMPLING_INTERVAL
+    );
+    this->addControl(
+        ControlType::Number, 
+        "Max difference between measurements (percentage)", 
+        this->storage->getParameter(Parameter::MAXIMUM_DISTANCE_DELTA, "15"),
+        Control::noParent,
+        Parameter::MAXIMUM_DISTANCE_DELTA
+    );
 
     ESPUI.addControl(ControlType::Separator, "MQTT settings");
     this->addControl(

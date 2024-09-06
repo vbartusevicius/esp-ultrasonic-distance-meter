@@ -17,6 +17,7 @@ class Aggregator
     public:
         Aggregator(Storage* storage, Logger* logger);
         float aggregate(float value);
+        float calculateAverage();
 
 };
 
